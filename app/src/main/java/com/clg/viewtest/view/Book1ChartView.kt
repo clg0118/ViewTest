@@ -18,6 +18,8 @@ class Book1ChartView @JvmOverloads constructor(
     lateinit var mPaintTime: Paint
     //柱状图画笔
     lateinit var mPaintBar: Paint
+    //价格文字画笔
+    lateinit var mPaintPrice: Paint
     //竖线画笔
     lateinit var mPaintVerticalLine: Paint
     //时间文字字体大小
@@ -33,16 +35,10 @@ class Book1ChartView @JvmOverloads constructor(
     private var mPiceList: MutableList<String> = ArrayList()
 
     init {
-        
+        init(context)
     }
 
-    private fun init(context: Context, isUpdate: Boolean) {
-        when(isUpdate){
-            true -> {
-
-            }
-
-        }
+    private fun init(context: Context) {
 
         //设置边缘特殊效果
         val paintBGBlur = BlurMaskFilter(
@@ -67,10 +63,32 @@ class Book1ChartView @JvmOverloads constructor(
         mPaintTime.isAntiAlias = true
         mPaintTime.strokeWidth = 1F
 
+        //绘制价格文字的画笔
+        mPaintPrice = Paint()
+        mPaintPrice.textSize = mTextSizePrice
+        mPaintTime.color = ContextCompat.getColor(context, R.color.color_a9c6d6)
+        mPaintTime.isAntiAlias = true
+        mPaintTime.strokeWidth = 1F
+
         mTimeMaxRect = Rect()
         mPriceMaxRect = Rect()
 
-
+        if (mTimeList.size > 0) {
+            mPaintTime.getTextBounds(
+                mTimeList[mTimeList.size - 1],
+                0,
+                mTimeList[mTimeList.size - 1].length,
+                mTimeMaxRect
+            )
+        }
+        if (mPiceList.size > 0) {
+            mPaintPrice.getTextBounds(
+                mPiceList[mPiceList.size - 1],
+                0,
+                mPiceList[mPiceList.size - 1].length,
+                mPriceMaxRect
+            )
+        }
 
     }
 
