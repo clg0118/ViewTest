@@ -8,4 +8,10 @@
     <color name="color_4388bc">#4388bc</color>
     <color name="color_274782">#274782</color>
     <color name="color_a9c6d6">#a9c6d6</color>
+
+
+    <color name="iflight_chart_line">#21D0BE</color>
+    <color name="iflight_chart_price">#666666</color>
+    <color name="iflight_chart_time">#666666</color>
+    <color name="payment_bind_card" >#dcdcdc</color>
 </resources>

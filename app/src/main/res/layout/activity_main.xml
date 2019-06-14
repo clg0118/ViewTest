@@ -7,10 +7,10 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <com.clg.viewtest.view.BarChartView
+    <com.clg.viewtest.view.Book1ChartView
             android:id="@+id/barchart"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="60dp"
             app:layout_constraintTop_toTopOf="parent"
     />
     <Button

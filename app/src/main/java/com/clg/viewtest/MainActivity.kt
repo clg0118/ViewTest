@@ -1,40 +1,42 @@
 package com.clg.viewtest
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import androidx.annotation.RequiresApi
 import com.clg.viewtest.view.BarChartView
 import com.clg.viewtest.view.BarChartViewJava
 import com.clg.viewtest.view.BarChartViewKT
+import com.clg.viewtest.view.Book1ChartView
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var barchart: BarChartView
+    lateinit var barchart: Book1ChartView
     lateinit var button: Button
+    var mTimeList = mutableListOf<String>("00:00","06:00","09:00","12:00","15:00","18:00","21:00","24:00")
+    var mPriceList = mutableListOf<String>("¥680", "¥410", "", "¥360", "¥780","¥1280","¥910")
+    var mBarMapList = mutableListOf<Map<String,Int>>()
+    var mBarList = mutableListOf<Int>(30,40,0,10,40,60,50)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         barchart = findViewById(R.id.barchart)
+
         button = findViewById(R.id.button)
+        barchart.setOnItemClickListener(object: Book1ChartView.onItemClickListener{
+            override fun onItemClickListener(position: Int) {
 
+
+            }
+
+        })
         button.setOnClickListener {
-            var datas = mutableListOf<Int>(40, 76, 90, 50, 100,23)
-            var xList = mutableListOf<String>("1月份", "2月份", "3月份", "4月份", "5月份","6月份")
-
-            //根据数据的最大值生成上下对应的Y轴坐标范围
-            var ylist = mutableListOf<Int>()
-            var maxYAxis: Int? = Collections.max(datas)
-            if (maxYAxis!! % 2 == 0) {
-                maxYAxis = maxYAxis + 2
-            } else {
-                maxYAxis = maxYAxis + 1
-            }
-            var keduSpace = (maxYAxis / datas.size) + 1
-            for (i in 0..datas.size) {
-                ylist.add(keduSpace * i)
-            }
-            barchart.updateValueData(datas, xList, ylist)
+            barchart.background = getDrawable(R.drawable.shape2)
+            barchart.updateValueData(timeList = mTimeList, priceList = mPriceList, barHightList = mBarList)
         }
 
     }
