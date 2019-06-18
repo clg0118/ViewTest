@@ -43,7 +43,7 @@ class Book1ChartView @JvmOverloads constructor(
     //时间文字底线之间的间距
     private val timeTextSpace = 10
     //柱状条之间的间距
-    private var itemSpace : Int = 0
+    private var itemSpace: Int = 0
     //柱状图高度集合
     private var mBarHightList: MutableList<Int> = ArrayList()
     //时间集合
@@ -63,11 +63,21 @@ class Book1ChartView @JvmOverloads constructor(
     //点击的item的角标
     var selectIndex = -1
     //time文字高度
-    private var timeTextHeight: Int =  0
+    private var timeTextHeight: Int = 0
     //绘制柱形图的坐标起点
     private var startX: Int = 0
     private var startY: Int = 0
+    //头部文字画笔
+    lateinit var mPaintTitle: Paint
+    //头部文字
+    val titleStr = "点击筛选合适的航班起飞时间"
+    //头部文字字体大小
+    private val mTextSizeTitle = 12f
 
+    //头部文字 最大宽高
+    lateinit var mTitleMaxRect: Rect
+    //title文字高度
+    private var tiTextHeight: Int = 0
 
     init {
         init(context)
@@ -79,6 +89,14 @@ class Book1ChartView @JvmOverloads constructor(
         val paintBGBlur = BlurMaskFilter(
             1f, BlurMaskFilter.Blur.INNER
         )
+
+        //初始化绘制头部文字的画笔
+        mPaintTitle = Paint()
+        mPaintTitle.textSize = mTextSizeTitle
+        mPaintTitle.color = ContextCompat.getColor(context, R.color.iflight_chart_time)
+        mPaintTitle.isAntiAlias = true
+        mPaintTitle.strokeWidth = 1F
+
         //绘制柱状图的画笔
         mPaintBar = Paint()
         mPaintBar.style = Paint.Style.FILL
@@ -120,7 +138,16 @@ class Book1ChartView @JvmOverloads constructor(
 
         mTimeMaxRect = Rect()
         mPriceMaxRect = Rect()
+        mTitleMaxRect = Rect()
+        mPaintTitle.getTextBounds(
+            titleStr,
+            0,
+            titleStr.length,
+            mTitleMaxRect
+        )
 
+        //绘制时间文字的最大值所占的宽高
+        tiTextHeight = mTitleMaxRect.height()
         if (mTimeList.size > 0) {
             mPaintTime.getTextBounds(
                 mTimeList[mTimeList.size - 1],
@@ -139,8 +166,7 @@ class Book1ChartView @JvmOverloads constructor(
         }
         //绘制的时间文字的最大值所占的宽高
         timeTextHeight = mTimeMaxRect.height()
-        //坐标原点 y轴起点
-        startY = 120 + timeTextHeight + timeTextSpace + 8
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -153,7 +179,22 @@ class Book1ChartView @JvmOverloads constructor(
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
+//坐标原点 y轴起点
+        startY = height - (timeTextHeight + timeTextSpace + 8)
         if (mTimeList.size > 0 && mPriceList.size > 0) {
+            //绘制背景
+            val bgRect = Rect()
+            bgRect.top = 0
+            bgRect.bottom = height - (timeTextHeight + timeTextSpace + 8)
+            bgRect.left = startX
+            bgRect.right = startX + width
+            val bg = resources.getDrawable(R.drawable.shape2)
+            bg.bounds = bgRect
+            bg.draw(canvas)
+
+
+
+
             canvas.drawLine(
                 (startX).toFloat(),
                 (startY).toFloat(),
@@ -189,6 +230,7 @@ class Book1ChartView @JvmOverloads constructor(
                     mPaintVerticalLine
                 )
             }
+
             //绘制柱状条
             for (j in mPriceList.indices) {
                 val leftx = startX + marginSpace + j * lineSpace + barToLinSpace
@@ -227,6 +269,7 @@ class Book1ChartView @JvmOverloads constructor(
                     }
                     drawable.bounds = barRect
                     drawable.draw(canvas)
+
                 }
             }
 
@@ -257,7 +300,7 @@ class Book1ChartView @JvmOverloads constructor(
                         }
                     }
                 }
-                if (!isNoFlight){
+                if (!isNoFlight) {
                     this.invalidate()
                 }
                 return true
