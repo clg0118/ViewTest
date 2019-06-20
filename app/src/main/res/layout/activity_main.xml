@@ -13,12 +13,14 @@
             android:id="@+id/barchart"
             android:layout_width="match_parent"
             android:layout_height="85dp"
+            android:visibility="gone"
     />
     <Button
             android:id="@+id/button"
             android:text="按钮"
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/barchart"/>
 
     <LinearLayout
@@ -42,18 +44,21 @@
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:text="ssss"
+                android:visibility="gone"
                 />
 
         <TextView
                 android:id="@+id/tv_02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:gravity="center"
                 android:text="666"/>
 
         <TextView
                 android:id="@+id/tv_03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:text="999"/>
     </LinearLayout>
 
