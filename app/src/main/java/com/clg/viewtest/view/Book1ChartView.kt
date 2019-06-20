@@ -97,34 +97,34 @@ class Book1ChartView @JvmOverloads constructor(
 
         //绘制底线画笔
         mPaintLine = Paint()
-        mPaintLine.color = ContextCompat.getColor(context, R.color.iflight_chart_line)
+        mPaintLine.color = ContextCompat.getColor(context, R.color.chart_line)
         mPaintLine.isAntiAlias = true
         mPaintLine.strokeWidth = 2F
 
         //绘制时间文字的画笔
         mPaintTime = Paint()
         mPaintTime.textSize = mTextSizeTime
-        mPaintTime.color = ContextCompat.getColor(context, R.color.iflight_chart_time)
+        mPaintTime.color = ContextCompat.getColor(context, R.color.chart_time)
         mPaintTime.isAntiAlias = true
         mPaintTime.strokeWidth = 1F
 
         //绘制价格文字的画笔
         mPaintPrice = Paint()
         mPaintPrice.textSize = mTextSizePrice
-        mPaintPrice.color = ContextCompat.getColor(context, R.color.iflight_chart_price)
+        mPaintPrice.color = ContextCompat.getColor(context, R.color.chart_price)
         mPaintPrice.isAntiAlias = true
         mPaintPrice.strokeWidth = 1F
 
         //绘制竖线的画笔
         mPaintVerticalLine = Paint()
-        mPaintVerticalLine.color = ContextCompat.getColor(context, R.color.iflight_chart_line)
+        mPaintVerticalLine.color = ContextCompat.getColor(context, R.color.chart_line)
         mPaintVerticalLine.isAntiAlias = true
         mPaintVerticalLine.strokeWidth = 2F
 
         //无航班画笔
         mPaintNoFlight = Paint()
         mPaintNoFlight.textSize = mTextSizeNoFlight
-        mPaintNoFlight.color = ContextCompat.getColor(context, R.color.iflight_chart_price)
+        mPaintNoFlight.color = ContextCompat.getColor(context, R.color.chart_price)
         mPaintNoFlight.isAntiAlias = true
         mPaintNoFlight.strokeWidth = 1F
 
