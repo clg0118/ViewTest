@@ -13,10 +13,17 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.clg.viewtest.R
+import com.clg.viewtest.utils.dp
+import com.clg.viewtest.utils.sp
 import org.jetbrains.annotations.NotNull
 
+/**
+ * Author: clg48764.
+ * Date: 2019/6/11,17:18.
+ *
+ */
 class Book1ChartView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     //底线画笔
     lateinit var mPaintLine: Paint
@@ -31,17 +38,17 @@ class Book1ChartView @JvmOverloads constructor(
     // 无航班画笔
     lateinit var mPaintNoFlight: Paint
     //时间文字字体大小
-    private val mTextSizeTime = 20f
+    private val mTextSizeTime = 10f.sp
     //价格文字字体大小
-    private val mTextSizePrice = 24f
+    private val mTextSizePrice = 12f.sp
     //无航班字体大小
-    private val mTextSizeNoFlight = 24f
+    private val mTextSizeNoFlight = 12f.sp
     //时间文字 最大宽高
     lateinit var mTimeMaxRect: Rect
     //价格文字 最大宽高
     lateinit var mPriceMaxRect: Rect
     //时间文字底线之间的间距
-    private val timeTextSpace = 10
+    private val timeTextSpace = 10.dp
     //柱状条之间的间距
     private var itemSpace: Int = 0
     //柱状图高度集合
@@ -51,7 +58,7 @@ class Book1ChartView @JvmOverloads constructor(
     //价格集合
     private var mPriceList: MutableList<String> = ArrayList()
     //柱状条点击回调
-    private var itemClickListener: onItemClickListener? = null
+    private var itemClickListener: ((Int) -> Unit)? = null
     // View 左右边距
     private val marginSpace = 60
     // 柱状条到竖线的间距
@@ -67,17 +74,10 @@ class Book1ChartView @JvmOverloads constructor(
     //绘制柱形图的坐标起点
     private var startX: Int = 0
     private var startY: Int = 0
-    //头部文字画笔
-    lateinit var mPaintTitle: Paint
-    //头部文字
-    val titleStr = "点击筛选合适的航班起飞时间"
-    //头部文字字体大小
-    private val mTextSizeTitle = 12f
-
-    //头部文字 最大宽高
-    lateinit var mTitleMaxRect: Rect
-    //title文字高度
-    private var tiTextHeight: Int = 0
+    //View 高度
+    private val viewHeight = 60.dp
+    //竖线高度
+    private val verticalLineHeight = 20.dp
 
     init {
         init(context)
@@ -87,16 +87,8 @@ class Book1ChartView @JvmOverloads constructor(
 
         //设置边缘特殊效果
         val paintBGBlur = BlurMaskFilter(
-            1f, BlurMaskFilter.Blur.INNER
+                1f, BlurMaskFilter.Blur.INNER
         )
-
-        //初始化绘制头部文字的画笔
-        mPaintTitle = Paint()
-        mPaintTitle.textSize = mTextSizeTitle
-        mPaintTitle.color = ContextCompat.getColor(context, R.color.iflight_chart_time)
-        mPaintTitle.isAntiAlias = true
-        mPaintTitle.strokeWidth = 1F
-
         //绘制柱状图的画笔
         mPaintBar = Paint()
         mPaintBar.style = Paint.Style.FILL
@@ -131,42 +123,31 @@ class Book1ChartView @JvmOverloads constructor(
 
         //无航班画笔
         mPaintNoFlight = Paint()
-        mPaintNoFlight.textSize = mTextSizePrice
-        mPaintNoFlight.color = ContextCompat.getColor(context, R.color.iflight_chart_line)
+        mPaintNoFlight.textSize = mTextSizeNoFlight
+        mPaintNoFlight.color = ContextCompat.getColor(context, R.color.iflight_chart_price)
         mPaintNoFlight.isAntiAlias = true
         mPaintNoFlight.strokeWidth = 1F
 
         mTimeMaxRect = Rect()
         mPriceMaxRect = Rect()
-        mTitleMaxRect = Rect()
-        mPaintTitle.getTextBounds(
-            titleStr,
-            0,
-            titleStr.length,
-            mTitleMaxRect
-        )
-
-        //绘制时间文字的最大值所占的宽高
-        tiTextHeight = mTitleMaxRect.height()
         if (mTimeList.size > 0) {
             mPaintTime.getTextBounds(
-                mTimeList[mTimeList.size - 1],
-                0,
-                mTimeList[mTimeList.size - 1].length,
-                mTimeMaxRect
+                    mTimeList[mTimeList.size - 1],
+                    0,
+                    mTimeList[mTimeList.size - 1].length,
+                    mTimeMaxRect
             )
         }
         if (mPriceList.size > 0) {
             mPaintPrice.getTextBounds(
-                mPriceList[mPriceList.size - 1],
-                0,
-                mPriceList[mPriceList.size - 1].length,
-                mPriceMaxRect
+                    mPriceList[mPriceList.size - 1],
+                    0,
+                    mPriceList[mPriceList.size - 1].length,
+                    mPriceMaxRect
             )
         }
         //绘制的时间文字的最大值所占的宽高
         timeTextHeight = mTimeMaxRect.height()
-
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -179,28 +160,26 @@ class Book1ChartView @JvmOverloads constructor(
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
-//坐标原点 y轴起点
-        startY = height - (timeTextHeight + timeTextSpace + 8)
+        //坐标原点 y轴起点
+        startY = height - (timeTextHeight + timeTextSpace + 8.dp)
         if (mTimeList.size > 0 && mPriceList.size > 0) {
+
             //绘制背景
-            val bgRect = Rect()
-            bgRect.top = 0
-            bgRect.bottom = height - (timeTextHeight + timeTextSpace + 8)
-            bgRect.left = startX
-            bgRect.right = startX + width
+            val viewBgRect = Rect()
+            viewBgRect.top = 0
+            viewBgRect.bottom = height - (timeTextHeight + timeTextSpace + 8.dp)
+            viewBgRect.left = startX
+            viewBgRect.right = startX + width
             val bg = resources.getDrawable(R.drawable.shape2)
-            bg.bounds = bgRect
+            bg.bounds = viewBgRect
             bg.draw(canvas)
 
-
-
-
             canvas.drawLine(
-                (startX).toFloat(),
-                (startY).toFloat(),
-                (startX + width).toFloat(),
-                (startY).toFloat(),
-                mPaintLine
+                    (startX).toFloat(),
+                    (startY).toFloat(),
+                    (startX + width).toFloat(),
+                    (startY).toFloat(),
+                    mPaintLine
             )
 //            canvas.drawLine(
 //                    (startX + marginSpace + mTimeList.size * lineSpace).toFloat(),
@@ -216,45 +195,44 @@ class Book1ChartView @JvmOverloads constructor(
                 val rect = Rect()
                 mPaintTime.getTextBounds(mTimeList[j], 0, mTimeList[j].length, rect)
                 canvas.drawText(
-                    mTimeList[j],
-                    (startX + marginSpace + j * lineSpace - rect.width() / 2).toFloat(),
-                    (startY + rect.height() + timeTextSpace).toFloat(),
-                    mPaintTime
+                        mTimeList[j],
+                        (startX + marginSpace + j * lineSpace - rect.width() / 2).toFloat(),
+                        (startY + rect.height() + timeTextSpace).toFloat(),
+                        mPaintTime
                 )
                 //绘制竖线
                 canvas.drawLine(
-                    (startX + marginSpace + j * lineSpace).toFloat(),
-                    (startY).toFloat(),
-                    (startX + marginSpace + j * lineSpace).toFloat(),
-                    (startY - 20).toFloat(),
-                    mPaintVerticalLine
+                        (startX + marginSpace + j * lineSpace).toFloat(),
+                        (startY).toFloat(),
+                        (startX + marginSpace + j * lineSpace).toFloat(),
+                        (startY - verticalLineHeight).toFloat(),
+                        mPaintVerticalLine
                 )
             }
-
             //绘制柱状条
             for (j in mPriceList.indices) {
                 val leftx = startX + marginSpace + j * lineSpace + barToLinSpace
                 val rightx = startX + marginSpace + (j + 1) * lineSpace - barToLinSpace
                 if (TextUtils.isEmpty(mPriceList[j])) {
                     val rectText = Rect()
-                    mPaintNoFlight.getTextBounds("无航班", 0, 3, rectText)
+                    mPaintNoFlight.getTextBounds("无数据", 0, 3, rectText)
                     //绘制柱状条上的值
                     canvas.drawText(
-                        "无航班",
-                        (startX + leftx + (rightx - leftx) / 2 - rectText.width() / 2).toFloat(),
-                        (startY - timeTextSpace).toFloat(),
-                        mPaintNoFlight
+                            "无数据",
+                            (startX + leftx + (rightx - leftx) / 2 - rectText.width() / 2).toFloat(),
+                            (startY - timeTextSpace).toFloat(),
+                            mPaintNoFlight
                     )
 
                 } else {
                     val rectText = Rect()
-                    mPaintPrice.getTextBounds(mPriceList[j] + "", 0, (mPriceList[j] + "").length, rectText)
+                    mPaintPrice.getTextBounds("¥${mPriceList[j]}", 0, ("¥${mPriceList[j]}").length, rectText)
                     //绘制柱状条上的值
                     canvas.drawText(
-                        mPriceList[j],
-                        (startX + leftx + (rightx - leftx) / 2 - rectText.width() / 2).toFloat(),
-                        (startY - timeTextSpace - mBarHightList[j] - 4).toFloat(),
-                        mPaintPrice
+                            "¥${mPriceList[j]}",
+                            (startX + leftx + (rightx - leftx) / 2 - rectText.width() / 2).toFloat(),
+                            (startY - timeTextSpace - mBarHightList[j] - 4).toFloat(),
+                            mPaintPrice
                     )
                     // 绘制渐变色柱状条
                     val barRect = Rect()
@@ -262,14 +240,13 @@ class Book1ChartView @JvmOverloads constructor(
                     barRect.bottom = startY
                     barRect.left = leftx
                     barRect.right = rightx
-                    val drawable: Drawable = if (selectIndex == j) {
+                    val barBg: Drawable = if (selectIndex == j) {
                         resources.getDrawable(R.drawable.shape1)
                     } else {
                         resources.getDrawable(R.drawable.shape)
                     }
-                    drawable.bounds = barRect
-                    drawable.draw(canvas)
-
+                    barBg.bounds = barRect
+                    barBg.draw(canvas)
                 }
             }
 
@@ -295,7 +272,7 @@ class Book1ChartView @JvmOverloads constructor(
                         if (lastTouchX <= rightx && lastTouchX >= leftx) {
                             selectIndex = j
                             isNoFlight = TextUtils.isEmpty(mPriceList[j])
-                            itemClickListener?.onItemClickListener(selectIndex)
+                            itemClickListener?.invoke(selectIndex)
                             break
                         }
                     }
@@ -312,8 +289,8 @@ class Book1ChartView @JvmOverloads constructor(
     /**
      * 根据数据刷新界面
      * timeList = 时间段集合
-     *
-     *
+     * priceList = 价格集合
+     * barHightList = 柱状条高度集合
      */
     fun updateValueData(@NotNull timeList: MutableList<String>, @NotNull priceList: MutableList<String>, @NotNull barHightList: MutableList<Int>) {
         this.mTimeList = timeList
@@ -323,15 +300,18 @@ class Book1ChartView @JvmOverloads constructor(
         invalidate()
     }
 
-
     // 提供set方法
-    fun setOnItemClickListener(itemClickListener: onItemClickListener) {
+    fun setOnItemClickListener(itemClickListener: ((Int) -> Unit)?) {
         this.itemClickListener = itemClickListener
     }
-
-    //自定义接口
-    interface onItemClickListener {
-        fun onItemClickListener(position: Int)
+    //清除选中状态
+    fun removeSelectedState(){
+        selectIndex = -1
+        invalidate()
     }
-
+    //点击选中Bar
+    fun selectedItem(index:Int){
+        selectIndex = index
+        invalidate()
+    }
 }
