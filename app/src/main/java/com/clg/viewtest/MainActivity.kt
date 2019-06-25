@@ -1,16 +1,12 @@
 package com.clg.viewtest
 
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.text.method.LinkMovementMethod
 import android.widget.Button
-import android.widget.TextClock
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.clg.viewtest.stringutils.SpannableUtils
 import com.clg.viewtest.view.Book1ChartView
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     var mBarMapList = mutableListOf<Map<String,Int>>()
     var mBarList = mutableListOf<Int>(30*2,40*2,0,10*2,40*2,60*2,50*2)
     val content = "abcdefghijklmnopqrstuvdxyz"
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,6 +29,12 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
 
         }
-        tv_02.text = SpannableUtils.textColor(content)
+        tv_02.movementMethod = LinkMovementMethod.getInstance()
+//        val drawable = getResources().getDrawable(R.drawable.close)
+//        tv_02.text = SpannableUtils.imageSpan(content,drawable)
+//        val charTypeface = Typeface.createFromAsset(this.assets,"fonts/char.ttf")
+//        val typeface = TypefaceSpan("serif")
+        tv_02.text = SpannableUtils.subscriptSpan(content)
+//        tv_02.text = SpannableUtils.textAppearance(content,this,R.style.text)
     }
 }

@@ -1,23 +1,17 @@
 package com.clg.viewtest.stringutils
 
-import android.text.Spanned
-import android.text.TextPaint
-import android.util.Log
-import android.view.View
-import android.text.style.*
-import android.text.style.AbsoluteSizeSpan
 import android.content.Context
-import android.graphics.*
+import android.graphics.BlurMaskFilter
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.Spannable
-import android.text.style.DynamicDrawableSpan
-import android.text.style.ImageSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.SuperscriptSpan
-import android.text.style.TextAppearanceSpan
-import android.text.style.TypefaceSpan
-import android.text.style.SubscriptSpan
 import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.style.*
+import android.util.Log
+import android.view.View
 
 
 class SpannableUtils {
@@ -160,7 +154,7 @@ class SpannableUtils {
             return stringBuilder
         }
         //字体、大小、样式和颜色
-        fun textAppearance(content: String,context: Context,style: Int): SpannableStringBuilder {
+        fun textAppearance(content: String, context: Context,style: Int): SpannableStringBuilder {
             val stringBuilder = SpannableStringBuilder(content)
             //自定义文本样式
             val ab = TextAppearanceSpan(context, style)
@@ -169,16 +163,18 @@ class SpannableUtils {
 
         }
         //文本字体
-        fun typeface(content: String): SpannableStringBuilder {
+        fun typeface(content: String,typeface: TypefaceSpan): SpannableStringBuilder {
             val stringBuilder = SpannableStringBuilder(content)
             //文字字体
-            val ab = TypefaceSpan("serif")
-            stringBuilder.setSpan(ab, 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//            val typeface = TypefaceSpan("serif")
+            //val typeface = Typeface.createFromAsset(this.getAssets(),
+            //            "fonts/char.ttf")
+            stringBuilder.setSpan(typeface, 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             return stringBuilder
 
         }
         //文本超链接
-        fun URLSpan(content: String): SpannableStringBuilder {
+        fun uRLSpan(content: String): SpannableStringBuilder {
             val stringBuilder = SpannableStringBuilder(content)
             val urlSpan = URLSpan("http://www.baidu.com")
             stringBuilder.setSpan(urlSpan, 0, 5, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
